@@ -1,5 +1,5 @@
 <?php
-namespace Request\Model\Behavior;
+namespace Historic\Model\Behavior;
 
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
