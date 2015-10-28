@@ -1,5 +1,5 @@
 {
-    "name": "oxenti/Historic",
+    "name": "oxenti/historic",
     "description": "Historic Behavior for CakePHP",
     "type": "cakephp-plugin",
     "require": {
