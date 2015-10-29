@@ -41,4 +41,5 @@ On your app's,model  add the Histotic Behevior in initialize method:
     ...
 ```
 
+Warning: Historic's table require field is_active tyniInt(1).
 

@@ -32,9 +32,9 @@ class HistoricBehavior extends Behavior
     public function initialize(array $config)
     {
         parent::initialize($config);
-        $foreignKey = Inflector::singularize($this->_table->table()) . '_id';
+        $this->foreignKey = Inflector::singularize($this->_table->table()) . '_id';
         $this->_table->hasMany('Historics', [
-            'foreignKey' => $foreignKey,
+            'foreignKey' => $this->foreignKey,
             'conditions' => ['Historics.is_active' => true],
             'className' => $this->config()['class']
         ]);
@@ -47,14 +47,15 @@ class HistoricBehavior extends Behavior
     {
         $config = $this->config();
         $fields = $config['fields'];
-        $historicOld = $this->_table->Historics->find()->where(['request_id' => $entity->id])->toArray();
-        $this->_table->Historics->patchEntity($historicOld[0], ['is_active' => 0]);
         foreach ($fields as $key => $value) {
             $historic[$value] = $entity->get($value);
         }
-        $entity->set('historics', [$this->_table->Historics->newEntity($historic), $historicOld[0]]);
+        if (!$entity->isNew() && $historicOld = $this->_table->Historics->find()->where([$this->foreignKey => $entity->id])->toArray()) {
+            $this->_table->Historics->patchEntity($historicOld[0], ['is_active' => 0]);
+            $entity->set('historics', [$this->_table->Historics->newEntity($historic), $historicOld[0]]);
+        } else {
+            $entity->set('historics', [$this->_table->Historics->newEntity($historic)]);
+        }
         $entity->dirty('historics', true);
-        // debug($entity);
-        //    die();
     }
 }
