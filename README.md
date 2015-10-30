@@ -41,5 +41,22 @@ On your app's,model  add the Histotic Behevior in initialize method:
     ...
 ```
 
-Warning: Historic's table require field is_active tyniInt(1).
+### Configuration files [optional]
+Move the 'address.php' config file from the plugin's config folder to your app's config folder.
+
+On your app's 'bootstrap.php' add the address configuration file:
+```php
+    ...
+    try {
+	    Configure::config('default', new PhpConfig());
+	    Configure::load('app', 'default', false);
+	} catch (\Exception $e) {
+	    die($e->getMessage() . "\n");
+	}
+
+	Configure::load('historic', 'default');
+    ...
+```
+### Warning 
+Historic's table require field is_active tyniInt(1).
 

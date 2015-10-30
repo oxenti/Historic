@@ -58,4 +58,37 @@ class HistoricBehavior extends Behavior
         }
         $entity->dirty('historics', true);
     }
+
+    /**
+     * initialImport methode
+     *  import the data initial in the table
+     */
+    protected function initialImport()
+    {
+        if (Configure::read('historic_behavior.' . $this->config()['class'] . '.initialImport')) {
+            return;
+        } elseif (!$this->_table->find()->count() || $this->_table->Historics->find()->count()) {
+            return;
+        } else {
+            $fields = $this->config()['fields'];
+            $tableEntities = $this->_table->find()->toArray();
+            foreach ($tableEntities as $key => $entity) {
+                foreach ($fields as $key => $value) {
+                    $historic[$value] = $entity->get($value);
+                }
+                $historicData[] = $historic;
+            }
+            $historicEntities = $this->_table->Historics->newEntities($historicData);
+            debug($historicEntities);
+            Configure::write('historic_behavior.' . $this->config()['class'] . '.initialImport', false);
+            foreach ($historicEntities as $key => $historicEntity) {
+                if (!$this->_table->Historics->save($historicEntity)) {
+                    Configure::write('historic_behavior.' . $this->config()['class'] . '.initialImport', true);
+                    Configure::dump('historic', 'default', ['historic_behavior']);
+                    return;
+                }
+            }
+            Configure::dump('historic', 'default', ['historic_behavior']);
+        }
+    }
 }
